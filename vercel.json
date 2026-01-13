@@ -1,7 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/archive/assets/(.*)", "destination": "/assets/$1" },
-    { "source": "/archive", "destination": "/index.html" },
-    { "source": "/archive/(.*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/archive/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/archive(?:/(.*))?", "dest": "/index.html" }
   ]
 }
