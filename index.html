@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shironeko's Archive</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" crossorigin rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Lato:wght@300;400;700&family=Antonio:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#5D4037",
+              "shelf-dark": "#1a120b",
+              "shelf-light": "#3e2723",
+              paper: "#d6c8a5", /* Much darker, aged, dirty beige */
+              ink: "#2c2c2c",
+            },
+            fontFamily: {
+              display: ["Cinzel", "serif"],
+              serif: ["Cormorant Garamond", "serif"],
+              sans: ["Lato", "sans-serif"],
+              tall: ["Antonio", "sans-serif"],
+            },
+            perspective: {
+              '1000': '1000px',
+              '2000': '2000px',
+            },
+            animation: {
+              'shimmer': 'shimmer 3s linear infinite',
+              'unfold-left': 'unfold-left 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'unfold-right': 'unfold-right 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'fold-left': 'fold-left 0.8s cubic-bezier(0.7, 0, 0.84, 0) forwards',
+              'fold-right': 'fold-right 0.8s cubic-bezier(0.7, 0, 0.84, 0) forwards',
+              'fade-in': 'fadeIn 1.2s ease-out forwards',
+              'float': 'float 3s ease-in-out infinite',
+              'writing': 'writing 0.4s ease-in-out infinite',
+              'spin-slow': 'spin 12s linear infinite',
+            },
+            keyframes: {
+              shimmer: {
+                '0%': { backgroundPosition: '0% 50%' },
+                '100%': { backgroundPosition: '100% 50%' },
+              },
+              'unfold-left': {
+                '0%': { transform: 'rotateY(-90deg)', opacity: '0' },
+                '100%': { transform: 'rotateY(0deg)', opacity: '1' },
+              },
+              'unfold-right': {
+                 '0%': { transform: 'rotateY(90deg)', opacity: '0' },
+                 '100%': { transform: 'rotateY(0deg)', opacity: '1' },
+              },
+              'fold-left': {
+                '0%': { transform: 'rotateY(0deg)', opacity: '1' },
+                '100%': { transform: 'rotateY(-90deg)', opacity: '0' },
+              },
+              'fold-right': {
+                '0%': { transform: 'rotateY(0deg)', opacity: '1' },
+                '100%': { transform: 'rotateY(90deg)', opacity: '0' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              writing: {
+                '0%, 100%': { transform: 'rotate(0deg)' },
+                '25%': { transform: 'rotate(5deg)' },
+                '75%': { transform: 'rotate(-5deg)' },
+              }
+            }
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #0f0f0f;
+        overflow-x: hidden;
+      }
+      
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(62, 39, 35, 0.4);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(62, 39, 35, 0.6);
+      }
+
+      /* --- Textures --- */
+
+      /* Realistic Aged Parchment */
+      .texture-parchment {
+        background-color: #d6c8a5; /* Aged Darker */
+        background-image: 
+          /* Grain */
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E"),
+          /* Fibers */
+          url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+        background-blend-mode: multiply;
+        /* Heavy Burnt/Worn Edges via inset shadow */
+        box-shadow: 
+           inset 0 0 100px rgba(40, 20, 10, 0.4), 
+           inset 0 0 20px rgba(62, 39, 35, 0.5);
+      }
+
+      /* Stains, Foxing, and General Grime */
+      .texture-foxing {
+        background-image: 
+            /* Big stain blobs */
+            radial-gradient(ellipse at 15% 25%, rgba(62, 39, 35, 0.15) 0%, transparent 30%),
+            radial-gradient(ellipse at 80% 80%, rgba(62, 39, 35, 0.12) 0%, transparent 40%),
+            /* Small foxing dots */
+            url('https://www.transparenttextures.com/patterns/dust.png');
+        background-blend-mode: multiply;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+      
+      /* Scratches and Folds */
+      .texture-damage {
+         background-image: url('https://www.transparenttextures.com/patterns/scratched-metal.png'); /* repurposing scratches for paper creases */
+         opacity: 0.15;
+         mix-blend-mode: color-burn;
+         pointer-events: none;
+      }
+
+      .texture-grunge {
+        background-image: url('https://www.transparenttextures.com/patterns/crissxcross.png');
+        background-blend-mode: soft-light;
+        opacity: 0.8;
+      }
+      
+      .texture-noise {
+         background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+         opacity: 0.4;
+         mix-blend-mode: overlay;
+      }
+
+      /* Cloth Binding Texture - New Retro Look */
+      .texture-cloth {
+        background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h4v4H0z' fill='none'/%3E%3Cpath d='M0 0h1v1H0zM2 2h1v1H2z' fill='%23000' fill-opacity='0.15'/%3E%3C/svg%3E");
+        background-size: 2px 2px;
+        opacity: 0.4;
+        mix-blend-mode: multiply;
+      }
+
+      /* Lux Gold Foil Effect - Updated to Antique Matte Gold */
+      .gold-foil-text {
+        background: linear-gradient(
+          to bottom right, 
+          #c5a059 0%, 
+          #dcc288 50%, 
+          #b08d55 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0px 1px 1px rgba(0,0,0,0.5); /* Deep shadow for stamped look */
+      }
+
+      .gold-fill {
+        fill: url(#goldGradient);
+      }
+      
+      /* Embossed effect for leather stamps */
+      .embossed-text {
+        color: rgba(0,0,0,0.4);
+        text-shadow: 
+           1px 1px 0px rgba(255,255,255,0.1),
+           -1px -1px 1px rgba(0,0,0,0.7);
+      }
+
+      .spine-shadow {
+        background: linear-gradient(to right, 
+            rgba(0,0,0,0.6) 0%, 
+            rgba(0,0,0,0.2) 20%, 
+            transparent 100%);
+      }
+      
+      .book-edge {
+        background: linear-gradient(to right, #8a8a8a, #cfcfcf 20%, #8a8a8a 40%, #cfcfcf 60%, #8a8a8a 80%, #555);
+      }
+      
+      .transform-style-3d {
+        transform-style: preserve-3d;
+      }
+      
+      .backface-hidden {
+        backface-visibility: hidden;
+      }
+      
+      .rotate-y-180 {
+        transform: rotateY(-180deg);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^6.22.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
