@@ -39,11 +39,6 @@ export async function publishArticle(
     updatedAt: new Date().toISOString(),
   };
 
-  // Remove data URLs from musicUrl (Firestore 1MB field limit)
-  if (articleData.musicUrl && articleData.musicUrl.startsWith('data:')) {
-    delete articleData.musicUrl;
-  }
-
   // Remove undefined values (Firestore doesn't accept them)
   const cleanedData = Object.fromEntries(
     Object.entries(articleData).filter(([_, value]) => value !== undefined)
@@ -68,11 +63,6 @@ export async function updatePublishedArticle(
     ...updates,
     updatedAt: new Date().toISOString(),
   };
-
-  // Remove data URLs from musicUrl (Firestore 1MB field limit)
-  if (updateData.musicUrl && updateData.musicUrl.startsWith('data:')) {
-    delete updateData.musicUrl;
-  }
 
   // Remove undefined values (Firestore doesn't accept them)
   const cleanedUpdates = Object.fromEntries(
