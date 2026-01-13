@@ -39,6 +39,11 @@ export async function publishArticle(
     updatedAt: new Date().toISOString(),
   };
 
+  // Remove data URLs from musicUrl (Firestore 1MB field limit)
+  if (articleData.musicUrl && articleData.musicUrl.startsWith('data:')) {
+    delete articleData.musicUrl;
+  }
+
   // Remove undefined values (Firestore doesn't accept them)
   const cleanedData = Object.fromEntries(
     Object.entries(articleData).filter(([_, value]) => value !== undefined)
@@ -59,12 +64,19 @@ export async function updatePublishedArticle(
     throw new Error('Must be authenticated to update articles');
   }
 
+  const updateData = {
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+
+  // Remove data URLs from musicUrl (Firestore 1MB field limit)
+  if (updateData.musicUrl && updateData.musicUrl.startsWith('data:')) {
+    delete updateData.musicUrl;
+  }
+
   // Remove undefined values (Firestore doesn't accept them)
   const cleanedUpdates = Object.fromEntries(
-    Object.entries({
-      ...updates,
-      updatedAt: new Date().toISOString(),
-    }).filter(([_, value]) => value !== undefined)
+    Object.entries(updateData).filter(([_, value]) => value !== undefined)
   );
 
   await updateDoc(doc(db, ARTICLES_COLLECTION, articleId), cleanedUpdates);
