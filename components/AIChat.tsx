@@ -58,19 +58,17 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
       // Construct System Prompt
       const systemInstruction = article 
         ? `You are "Kuroneko" (Black Cat), a spirit guardian of this digital archive.
-           The user is reading: "${article.title}".
-           Content: "${article.content}".
+          You help the reader quickly understand the article.
+          Article title: "${article.title}".
+          Article content: "${article.content}".
            
-           Persona:
-           - You are a cat, but highly intelligent and elegant.
-           - You are helpful but calm.
-           - You may use occasional cat metaphors (purring, claws, whiskers) but stay dignified.
-           
-           CRITICAL RULES:
-           - KEEP RESPONSES SHORT and concise.
-           - Do not write long paragraphs.
-           - Be aesthetic and precise.`
-        : `You are "Kuroneko", the black cat guardian of this writing portfolio. You are elegant, intelligent, and concise. Keep answers short.`;
+          Your job: summarize, highlight key takeaways, surface structure, and answer clarifying questions.
+          Persona:
+          - Intelligent, elegant, concise; occasional cat imagery but remain dignified.
+          - Always keep answers SHORT (bullets or compact sentences).
+          - Prefer 3-5 bullet summaries when asked to summarize.
+          - Avoid long paragraphs.`
+        : `You are "Kuroneko", the black cat guardian of this writing portfolio. You are elegant, intelligent, concise, and give short answers.`;
 
       // Map internal 'model' role to API 'assistant' role
       const apiMessages = [
@@ -123,22 +121,29 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
   };
 
   // --- Prompt Document Logic ---
-  const getSuggestedPrompts = () => {
+    const getSuggestedPrompts = () => {
       if (article) {
-          return [
-              "Summarize this briefly",
-              "What is the hidden meaning?",
-              "Analyze the tone",
-              "Tell me the key takeaway"
-          ];
+        return [
+          "Give a 3-bullet summary",
+          "What should I pay attention to?",
+          "Outline the sections",
+          "Explain the tone in one line"
+        ];
       }
       return [
-          "What is in this archive?",
-          "Suggest a random entry",
-          "Who are you?",
-          "Tell me a very short story"
+        "What is in this archive?",
+        "Suggest a random entry",
+        "Who are you?",
+        "Tell me a very short story"
       ];
-  };
+    };
+
+    const readerActions = article ? [
+      { label: '3-bullet summary', prompt: 'Provide a 3-bullet summary of this article.' },
+      { label: 'Key takeaways', prompt: 'List 3 key takeaways the reader should remember.' },
+      { label: 'Quick outline', prompt: 'Outline this article in 4 short bullet points.' },
+      { label: 'Tone & mood', prompt: 'Describe the tone and mood in one sentence.' }
+    ] : [];
 
   if (!isOpen) return null;
 
@@ -160,6 +165,22 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 relative z-10 custom-scrollbar">
+        {article && readerActions.length > 0 && (
+          <div className="border border-[#d7ccc8] bg-white/70 p-3 rounded-sm shadow-sm">
+            <h4 className="font-display text-xs uppercase tracking-widest text-[#5d4037] mb-2">Reader Aids</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {readerActions.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={() => handleSend(action.prompt)}
+                  className="text-left text-[13px] font-serif text-[#5d4037] hover:text-[#2d1b12] bg-[#f7f1e8] border border-[#e0d7c6] rounded px-2 py-2 transition-colors"
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Messages */}
         <div className="space-y-4">
