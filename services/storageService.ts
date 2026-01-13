@@ -30,6 +30,55 @@ export async function uploadAudioFile(
 }
 
 /**
+ * Convert base64 data URL to File and upload to Firebase Storage
+ * @param dataUrl - The base64 data URL
+ * @param articleId - The ID of the article
+ * @returns The download URL of the uploaded file
+ */
+export async function uploadBase64Audio(
+  dataUrl: string,
+  articleId: string
+): Promise<string> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new Error('Must be authenticated to upload files');
+  }
+
+  // Extract base64 data and mime type
+  const matches = dataUrl.match(/^data:(.+?);base64,(.+)$/);
+  if (!matches) {
+    throw new Error('Invalid data URL format');
+  }
+
+  const mimeType = matches[1];
+  const base64Data = matches[2];
+
+  // Convert base64 to blob
+  const byteString = atob(base64Data);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+
+  const blob = new Blob([uint8Array], { type: mimeType });
+
+  // Create filename from mime type
+  const extension = mimeType.split('/')[1] || 'audio';
+  const timestamp = Date.now();
+  const filename = `${articleId}_${timestamp}.${extension}`;
+  const storageRef = ref(storage, `audio/${user.uid}/${filename}`);
+
+  // Upload the blob
+  await uploadBytes(storageRef, blob);
+
+  // Get and return the download URL
+  const downloadURL = await getDownloadURL(storageRef);
+  return downloadURL;
+}
+
+/**
  * Delete audio file from Firebase Storage
  * @param audioUrl - The download URL of the file to delete
  */

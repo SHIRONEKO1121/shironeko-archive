@@ -3,7 +3,7 @@ import { Category, Article } from '../types';
 import Markdown from 'react-markdown';
 import PasswordModal from './PasswordModal';
 import { publishArticle, unpublishArticle, updatePublishedArticle, isArticlePublished } from '../services/articleService';
-import { uploadAudioFile, deleteAudioFile } from '../services/storageService';
+import { uploadAudioFile, deleteAudioFile, uploadBase64Audio } from '../services/storageService';
 import { auth } from '../firebase';
 import { signInAnonymously } from 'firebase/auth';
 
@@ -352,12 +352,6 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           return;
       }
       
-      // Check for base64 audio data
-      if (musicUrl && musicUrl.startsWith('data:')) {
-          setPublishError('Cannot publish: Audio file is stored locally. Please re-upload the audio file or use a URL instead.');
-          return;
-      }
-      
       setIsPublishing(true);
       setPublishError(null);
       
@@ -368,9 +362,32 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           }
           
           const category = categories.find(c => c.id === selectedCategoryId);
-          const article = category?.articles.find(a => a.id === selectedArticleId);
+          let article = category?.articles.find(a => a.id === selectedArticleId);
           
           if (article) {
+              // Check for base64 audio data and upload to Firebase Storage
+              if (article.musicUrl && article.musicUrl.startsWith('data:')) {
+                  setNotification({
+                      title: 'Uploading Audio...',
+                      subtitle: 'Converting local audio to cloud storage.'
+                  });
+                  
+                  try {
+                      const firebaseUrl = await uploadBase64Audio(article.musicUrl, selectedArticleId);
+                      
+                      // Update the article with new URL
+                      article = { ...article, musicUrl: firebaseUrl };
+                      setMusicUrl(firebaseUrl);
+                      
+                      // Update in local storage
+                      onSave(selectedCategoryId, article);
+                  } catch (uploadError: any) {
+                      setPublishError(`Failed to upload audio: ${uploadError.message}`);
+                      setIsPublishing(false);
+                      return;
+                  }
+              }
+              
               if (isPublishedToFirebase) {
                   // Update existing published article
                   await updatePublishedArticle(selectedArticleId, article);
