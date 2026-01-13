@@ -10,11 +10,8 @@ export default defineConfig({
     outDir: 'dist',
   },
   server: {
-    historyApiFallback: {
-      rewrites: [
-        { from: /^\/archive\/.*/, to: '/archive/index.html' }
-      ]
-    }
+    // Dev server fallback for client-side routing
+    historyApiFallback: true,
   },
   // Expose env vars to client code
   define: {
