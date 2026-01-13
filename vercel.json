@@ -1,8 +1,12 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/archive/(.*)",
-      "destination": "/archive/index.html"
+      "src": "/archive/(.*)",
+      "dest": "/archive/index.html"
+    },
+    {
+      "src": "/archive",
+      "dest": "/archive/index.html"
     }
   ]
 }
