@@ -1,5 +1,8 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/archive/:path*", "destination": "/index.html" }
+    { "source": "/archive", "destination": "/index.html" },
+    { "source": "/archive/:match*", "destination": "/index.html" }
   ]
 }
