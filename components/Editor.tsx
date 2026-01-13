@@ -397,6 +397,11 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
       setPublishError(null);
       
       try {
+          // Ensure user is authenticated
+          if (!auth.currentUser) {
+              await signInAnonymously(auth);
+          }
+          
           await unpublishArticle(selectedArticleId);
           setIsPublishedToFirebase(false);
           setNotification({
