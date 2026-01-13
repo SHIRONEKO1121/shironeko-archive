@@ -3,9 +3,8 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // Set base to '/archive/' so that assets are loaded from shironeko.site/archive/assets/...
-  // instead of the root domain. This fixes 404 errors for JS/CSS files.
-  base: '/archive/', 
+  // Serve from domain root (using a dedicated subdomain like archive.shironeko.site)
+  base: '/', 
   build: {
     outDir: 'dist',
   },
