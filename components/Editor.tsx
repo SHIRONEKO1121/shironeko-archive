@@ -344,13 +344,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
       executeSave(false);
       setIsPublishConfirmOpen(false);
   };
-  
-  const handlePublishToFirebase = async () => {
-      if (!selectedArticleId || !title || !content) {
-          setPublishError('Please save your article first');
-          return;
-      }
-      
+   
   const handlePublishToFirebase = async () => {
       if (!selectedArticleId || !title || !content) {
           setPublishError('Please save your article first');
@@ -395,7 +389,8 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           setTimeout(() => setNotification(null), 3000);
       }
   };
-  const handleUnpublishFromFirebase = async () => {
+  
+ const handleUnpublishFromFirebase = async () => {
       if (!selectedArticleId) return;
       
       setIsPublishing(true);
@@ -614,7 +609,7 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
              );
          }
     }
-  }), [handleConfigUpdate, viewMode, currentPixelSize]);
+}), [handleConfigUpdate, viewMode, currentPixelSize]);
 
   if (!isOpen) return null;
 
