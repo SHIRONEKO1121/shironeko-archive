@@ -3,7 +3,6 @@ import { Category, Article } from '../types';
 import Markdown from 'react-markdown';
 import PasswordModal from './PasswordModal';
 import { publishArticle, unpublishArticle, updatePublishedArticle, isArticlePublished } from '../services/articleService';
-import { uploadAudioFile, deleteAudioFile, uploadBase64Audio } from '../services/storageService';
 import { auth } from '../firebase';
 import { signInAnonymously } from 'firebase/auth';
 
@@ -352,6 +351,12 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           return;
       }
       
+  const handlePublishToFirebase = async () => {
+      if (!selectedArticleId || !title || !content) {
+          setPublishError('Please save your article first');
+          return;
+      }
+      
       setIsPublishing(true);
       setPublishError(null);
       
@@ -362,32 +367,9 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           }
           
           const category = categories.find(c => c.id === selectedCategoryId);
-          let article = category?.articles.find(a => a.id === selectedArticleId);
+          const article = category?.articles.find(a => a.id === selectedArticleId);
           
           if (article) {
-              // Check for base64 audio data and upload to Firebase Storage
-              if (article.musicUrl && article.musicUrl.startsWith('data:')) {
-                  setNotification({
-                      title: 'Uploading Audio...',
-                      subtitle: 'Converting local audio to cloud storage.'
-                  });
-                  
-                  try {
-                      const firebaseUrl = await uploadBase64Audio(article.musicUrl, selectedArticleId);
-                      
-                      // Update the article with new URL
-                      article = { ...article, musicUrl: firebaseUrl };
-                      setMusicUrl(firebaseUrl);
-                      
-                      // Update in local storage
-                      onSave(selectedCategoryId, article);
-                  } catch (uploadError: any) {
-                      setPublishError(`Failed to upload audio: ${uploadError.message}`);
-                      setIsPublishing(false);
-                      return;
-                  }
-              }
-              
               if (isPublishedToFirebase) {
                   // Update existing published article
                   await updatePublishedArticle(selectedArticleId, article);
@@ -413,7 +395,6 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           setTimeout(() => setNotification(null), 3000);
       }
   };
-  
   const handleUnpublishFromFirebase = async () => {
       if (!selectedArticleId) return;
       
@@ -487,51 +468,44 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
       }
   };
   
-  const handleAudioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
       setUploadError(null);
       if (e.target.files && e.target.files[0]) {
           const file = e.target.files[0];
-          // Size check (10MB limit for Firebase Storage)
-          if (file.size > 10 * 1024 * 1024) {
-               setUploadError("File too large (>10MB). Please compress or use a smaller file.");
+          // Simple size check (approx 5MB limit for safety with localStorage)
+          if (file.size > 5 * 1024 * 1024) {
+               setUploadError("File too large (>5MB). Please use a URL or compress.");
                return;
           }
           
           setIsUploading(true);
           setUploadProgress(0);
 
-          try {
-              // Simulate progress for better UX
-              const progressInterval = setInterval(() => {
-                  setUploadProgress(prev => Math.min(prev + 10, 90));
-              }, 200);
+          const reader = new FileReader();
+          
+          reader.onprogress = (data) => {
+              if (data.lengthComputable) {
+                  const progress = Math.round((data.loaded / data.total) * 100);
+                  setUploadProgress(progress);
+              }
+          };
 
-              // Upload to Firebase Storage
-              const downloadURL = await uploadAudioFile(file, currentArticle?.id || 'draft');
-              
-              clearInterval(progressInterval);
+          reader.onload = () => {
+              setMusicUrl(reader.result as string);
+              setIsUploading(false);
               setUploadProgress(100);
-              setMusicUrl(downloadURL);
+          };
+          
+          reader.onerror = () => {
+              setUploadError("Failed to upload audio file.");
               setIsUploading(false);
-          } catch (error: any) {
-              console.error('Audio upload error:', error);
-              setUploadError(error.message || "Failed to upload audio file.");
-              setIsUploading(false);
-              setUploadProgress(0);
           }
+
+          reader.readAsDataURL(file);
       }
   };
   
-  const handleRemoveMusic = async () => {
-      // If it's a Firebase Storage URL, delete it
-      if (musicUrl && musicUrl.includes('firebasestorage.googleapis.com')) {
-          try {
-              await deleteAudioFile(musicUrl);
-          } catch (error) {
-              console.error('Failed to delete audio file:', error);
-          }
-      }
-      
+  const handleRemoveMusic = () => {
       setMusicUrl('');
       setIsPreviewPlaying(false);
       setUploadError(null);
