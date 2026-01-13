@@ -65,7 +65,7 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
           Your job: summarize, highlight key takeaways, surface structure, and answer clarifying questions.
           Persona:
           - Intelligent, elegant, concise; occasional cat imagery but remain dignified.
-          - Always keep answers SHORT (bullets or compact sentences).
+          - Always avoid lengthy sentences (bullets or compact sentences).
           - Prefer 3-5 bullet summaries when asked to summarize.
           - Avoid long paragraphs.`
         : `You are "Kuroneko", the black cat guardian of this writing portfolio. You are elegant, intelligent, concise, and give short answers.`;
@@ -124,10 +124,10 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
     const getSuggestedPrompts = () => {
       if (article) {
         return [
-          "Give a 3-bullet summary",
-          "What should I pay attention to?",
-          "Outline the sections",
-          "Explain the tone in one line"
+          "Summarize this article in short.",
+          "Tell me more about the places/things mentioned in this article.",
+          "Tell me more about SHIRONEKO.",
+          "Tell me a cat joke."
         ];
       }
       return [
@@ -139,10 +139,10 @@ const AIChat: React.FC<AIChatProps> = ({ article, isOpen, onClose }) => {
     };
 
     const readerActions = article ? [
-      { label: '3-bullet summary', prompt: 'Provide a 3-bullet summary of this article.' },
-      { label: 'Key takeaways', prompt: 'List 3 key takeaways the reader should remember.' },
-      { label: 'Quick outline', prompt: 'Outline this article in 4 short bullet points.' },
-      { label: 'Tone & mood', prompt: 'Describe the tone and mood in one sentence.' }
+      { label: 'Summary', prompt: 'Summarize this article in short.' },
+      { label: 'Interaction', prompt: 'Tell me more about the places/things mentioned in this article.' },
+      { label: 'Owner', prompt: 'Tell me more about SHIRONEKO.' },
+      { label: 'Joke', prompt: 'Tell me a cat joke' }
     ] : [];
 
   if (!isOpen) return null;
