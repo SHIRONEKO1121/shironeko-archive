@@ -39,7 +39,12 @@ export async function publishArticle(
     updatedAt: new Date().toISOString(),
   };
 
-  await setDoc(doc(db, ARTICLES_COLLECTION, article.id), articleData);
+  // Remove undefined values (Firestore doesn't accept them)
+  const cleanedData = Object.fromEntries(
+    Object.entries(articleData).filter(([_, value]) => value !== undefined)
+  );
+
+  await setDoc(doc(db, ARTICLES_COLLECTION, article.id), cleanedData);
 }
 
 /**
@@ -54,10 +59,15 @@ export async function updatePublishedArticle(
     throw new Error('Must be authenticated to update articles');
   }
 
-  await updateDoc(doc(db, ARTICLES_COLLECTION, articleId), {
-    ...updates,
-    updatedAt: new Date().toISOString(),
-  });
+  // Remove undefined values (Firestore doesn't accept them)
+  const cleanedUpdates = Object.fromEntries(
+    Object.entries({
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    }).filter(([_, value]) => value !== undefined)
+  );
+
+  await updateDoc(doc(db, ARTICLES_COLLECTION, articleId), cleanedUpdates);
 }
 
 /**
