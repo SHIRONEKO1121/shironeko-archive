@@ -352,6 +352,12 @@ const Editor: React.FC<EditorProps> = ({ isOpen, onClose, categories, onSave, on
           return;
       }
       
+      // Check for base64 audio data
+      if (musicUrl && musicUrl.startsWith('data:')) {
+          setPublishError('Cannot publish: Audio file is stored locally. Please re-upload the audio file or use a URL instead.');
+          return;
+      }
+      
       setIsPublishing(true);
       setPublishError(null);
       
