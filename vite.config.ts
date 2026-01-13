@@ -9,6 +9,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
+  server: {
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/archive\/.*/, to: '/archive/index.html' }
+      ]
+    }
+  },
   // Expose env vars to client code
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
