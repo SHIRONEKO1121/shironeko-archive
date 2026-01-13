@@ -8,10 +8,6 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  server: {
-    // Dev server fallback for client-side routing
-    historyApiFallback: true,
-  },
   // Expose env vars to client code
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || ''),
